@@ -1,0 +1,61 @@
+version: "3"
+services:
+  chart_scheduler:
+    # platform: linux/amd64 # m1
+    restart: always
+    container_name: chart_scheduler
+    build:
+      context: "./chart_scheduler"
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    env_file:
+      - ./.env
+    volumes:
+      - ./chart_scheduler:/code/chart_scheduler
+      - /tmp/mysqld:/run/mysqld
+    depends_on:
+      - mysql
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
+      - TZ=Asia/Seoul
+  gin:
+    build:
+      context: "./gin"
+      dockerfile: Dockerfile
+    container_name: gin
+    restart: unless-stopped
+    ports:
+      - 8090:8090
+    env_file:
+      - ./.env
+    volumes:
+      - ./gin:/app
+      - /tmp/mysqld:/run/mysqld
+    depends_on:
+      - mysql
+  mysql:
+    platform: linux/amd64 # m1
+    image: "mysql:8.0.21"
+    logging:
+      driver: none
+    restart: always
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    env_file:
+      - ./.env
+    volumes:
+      - ./mysql/conf.d:/etc/mysql/conf.d
+      # When using cloud service => underline comments
+      - ./mysql/data:/var/lib//mysql #when using stack data in server
+      - ./mysql/initdb.d:/docker-entrypoint-initdb.d #when using stack data in server
+    # command: --disable-partition-engine-check
+    cap_add:
+      - SYS_NICE
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  

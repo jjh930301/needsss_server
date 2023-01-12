@@ -1,0 +1,14 @@
+uvicorn[standard]
+gunicorn
+fastapi
+finance-datareader
+bs4
+sqlalchemy
+PyJWT
+bcrypt
+databases
+aiomysql
+pykrx
+matplotlib
+rocketry
+asyncio

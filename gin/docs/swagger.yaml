@@ -1,0 +1,216 @@
+definitions:
+  auth.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      email:
+        type: string
+      mobile:
+        type: string
+      nickname:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  auth.RegistBody:
+    properties:
+      email:
+        type: string
+      mobile:
+        type: string
+      nickname:
+        type: string
+      password:
+        type: string
+    type: object
+  auth.UserResponse:
+    properties:
+      access_token:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      mobile:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  interest.InterestListResponse:
+    properties:
+      recent:
+        $ref: '#/definitions/interest.interestTickerChartModel'
+      ticker:
+        $ref: '#/definitions/interest.interestList'
+    type: object
+  interest.SetInterestBody:
+    properties:
+      code:
+        type: string
+    type: object
+  interest.interestList:
+    properties:
+      close:
+        type: string
+      date_time:
+        type: string
+      name:
+        type: string
+      percent:
+        type: string
+      symbol:
+        description: index
+        type: string
+      type:
+        type: integer
+      user:
+        allOf:
+        - $ref: '#/definitions/interest.interestUserModel'
+        description: '`gorm:"foreignKey:UserId;references:ID" json:"user"`'
+      volume:
+        type: string
+    type: object
+  interest.interestTickerChartModel:
+    properties:
+      close:
+        type: number
+      percent:
+        type: string
+      volume:
+        type: string
+    type: object
+  interest.interestUserModel:
+    properties:
+      nickname:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /auth/login:
+    get:
+      consumes:
+      - application/json
+      description: 2000 성공
+      parameters:
+      - description: email
+        in: query
+        name: email
+        type: string
+      - description: key
+        in: query
+        name: key
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.LoginResponse'
+      summary: 로그인
+      tags:
+      - auth
+  /auth/regist:
+    post:
+      consumes:
+      - application/json
+      description: 2001 성공 \n 4001 missing bodies \n 4002 Cannot create user \n 4003
+        Type is not match
+      parameters:
+      - description: body data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RegistBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.UserResponse'
+      summary: 회원가입
+      tags:
+      - auth
+  /health/check:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      summary: health check
+      tags:
+      - health
+  /interest:
+    get:
+      consumes:
+      - application/json
+      description: 2000 성공 \n
+      parameters:
+      - description: offset count
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interest.InterestListResponse'
+      summary: 관심종목
+      tags:
+      - interest
+    post:
+      consumes:
+      - application/json
+      description: 2000 성공 \n
+      parameters:
+      - description: add interest
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/interest.SetInterestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/interest.InterestListResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: 관심종목 추가
+      tags:
+      - interest
+  /ticker/{ticker}:
+    get:
+      consumes:
+      - application/json
+      description: 2000 성공
+      parameters:
+      - description: code
+        in: path
+        name: ticker
+        required: true
+        type: string
+      - description: offset count
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: 종목 가져오기
+      tags:
+      - ticker
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

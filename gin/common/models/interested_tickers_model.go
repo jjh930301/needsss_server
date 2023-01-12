@@ -20,6 +20,8 @@ type InterestedTickerModel struct {
 	Close        decimal.Decimal `gorm:"column:close;type:decimal(11,3);not null" json:"close"`
 	Percent      float32         `gorm:"column:percent;type:float;not null" json:"percent"`
 	Volume       int64           `gorm:"column:volume;type:bigint;not null" json:"volume"`
+	SaleClose    decimal.Decimal `gorm:"column:sale_close;type:decimal(11,3);not null" json:"sales_close"`
+	SaledAt      time.Time       `gorm:"column:saled_at;type:datetime;default null" json:"saled_at,omitempty"`
 }
 
 func (InterestedTickerModel) TableName() string {

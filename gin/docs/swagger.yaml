@@ -36,6 +36,13 @@ definitions:
       refresh_token:
         type: string
     type: object
+  interest.DeleteIntereestBody:
+    properties:
+      code:
+        type: string
+      date:
+        type: string
+    type: object
   interest.InterestListResponse:
     properties:
       recent:
@@ -64,9 +71,7 @@ definitions:
       type:
         type: integer
       user:
-        allOf:
-        - $ref: '#/definitions/interest.interestUserModel'
-        description: '`gorm:"foreignKey:UserId;references:ID" json:"user"`'
+        $ref: '#/definitions/interest.interestUserModel'
       volume:
         type: string
     type: object
@@ -145,6 +150,25 @@ paths:
       tags:
       - health
   /interest:
+    delete:
+      consumes:
+      - application/json
+      description: 2000 성공 \n
+      parameters:
+      - description: delete interest
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/interest.DeleteIntereestBody'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: 관심종목 삭제
+      tags:
+      - interest
     get:
       consumes:
       - application/json
@@ -183,7 +207,7 @@ paths:
           schema:
             $ref: '#/definitions/interest.InterestListResponse'
       security:
-      - ApiKeyAuth: []
+      - BearerAuth: []
       summary: 관심종목 추가
       tags:
       - interest
@@ -209,7 +233,7 @@ paths:
       tags:
       - ticker
 securityDefinitions:
-  ApiKeyAuth:
+  BearerAuth:
     in: header
     name: Authorization
     type: apiKey

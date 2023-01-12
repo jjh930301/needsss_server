@@ -39,3 +39,8 @@ type InterestListResponse struct {
 type SetInterestBody struct {
 	Code string `json:"code"`
 }
+
+type DeleteIntereestBody struct {
+	Code string `json:"code"`
+	Date string `json:"date"`
+}

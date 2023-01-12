@@ -75,3 +75,20 @@ func setList(userId string, code string) (bool, error) {
 	}
 	return true, nil
 }
+
+// hard delete
+func deleteList(id string, body *DeleteIntereestBody) error {
+
+	uuid, _ := uuid.FromString(id)
+	date, parseErr := time.Parse("2006-01-02", body.Date)
+	if parseErr != nil {
+		return fmt.Errorf("Cannot string to date")
+	}
+	err := database.DB.Where(&models.InterestedTickerModel{
+		UserId:       uuid,
+		TickerSymbol: body.Code,
+		Date:         date,
+	}).Delete(&models.InterestedTickerModel{}).Error
+	fmt.Println(err)
+	return err
+}

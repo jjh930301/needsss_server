@@ -47,7 +47,7 @@ func GetList(c *gin.Context) {
 // @Param data body SetInterestBody true "add interest".
 // @Router /interest [post]
 // @Success 200 {object} InterestListResponse
-// @Security ApiKeyAuth
+// @Security BearerAuth
 func SetList(c *gin.Context) {
 
 	user, userErr := c.Keys["user"].(middleware.AuthClaim)
@@ -65,4 +65,30 @@ func SetList(c *gin.Context) {
 		res.BadRequest(c, "Cannot add ticker", 4002)
 	}
 	res.Ok(c, "Succesfully add ticker", gin.H{"result": true}, 2000)
+}
+
+// @Tags interest
+// @Summary 관심종목 삭제
+// @Description 2000 성공 \n
+// @Accept json
+// @Produce json
+// @Param data body DeleteIntereestBody true "delete interest".
+// @Router /interest [delete]
+// @Security BearerAuth
+func DeleteList(c *gin.Context) {
+	user, userErr := c.Keys["user"].(middleware.AuthClaim)
+	if !userErr {
+		res.Forbidden(c, "Required login", 200)
+	}
+
+	var body DeleteIntereestBody
+	if err := c.ShouldBindJSON(&body); err != nil {
+		res.BadRequest(c, "Missing bodies", 4001)
+		panic(err)
+	}
+	err := deleteList(user.UserID, &body)
+	if err != nil {
+		res.BadRequest(c, "Cannot delete ticker", 4002)
+	}
+	res.Ok(c, "Successfully delete ticker", gin.H{"result": true}, 2000)
 }

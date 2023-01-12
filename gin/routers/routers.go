@@ -27,6 +27,7 @@ func InitRouter() *gin.Engine {
 	{
 		interest.GET("", interestRouter.GetList)
 		interest.POST("", middleware.Authenticator, interestRouter.SetList)
+		interest.DELETE("", middleware.Authenticator, interestRouter.DeleteList)
 	}
 
 	return r

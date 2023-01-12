@@ -9,7 +9,7 @@ import (
 	// _ "github.com/swaggo/gin-swagger/example/basic/docs"
 )
 
-// @securityDefinitions.apikey ApiKeyAuth
+// @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
 func main() {

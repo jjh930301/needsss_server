@@ -135,7 +135,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "2000 성공 \\n",
@@ -168,6 +168,36 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "2000 성공 \\n",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "interest"
+                ],
+                "summary": "관심종목 삭제",
+                "parameters": [
+                    {
+                        "description": "delete interest",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/interest.DeleteIntereestBody"
+                        }
+                    }
+                ],
+                "responses": {}
             }
         },
         "/ticker/{ticker}": {
@@ -260,6 +290,17 @@ const docTemplate = `{
                 }
             }
         },
+        "interest.DeleteIntereestBody": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
         "interest.InterestListResponse": {
             "type": "object",
             "properties": {
@@ -302,12 +343,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "user": {
-                    "description": "` + "`" + `gorm:\"foreignKey:UserId;references:ID\" json:\"user\"` + "`" + `",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/interest.interestUserModel"
-                        }
-                    ]
+                    "$ref": "#/definitions/interest.interestUserModel"
                 },
                 "volume": {
                     "type": "string"
@@ -338,7 +374,7 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "ApiKeyAuth": {
+        "BearerAuth": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

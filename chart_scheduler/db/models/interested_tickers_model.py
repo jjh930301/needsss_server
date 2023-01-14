@@ -40,6 +40,12 @@ class InterestedTickersModel(Base) :
   close : int = Column(DECIMAL(precision=11 , scale=3) , nullable=False)
   percent : float = Column(Float , nullable=False , default=0)
   volume : int = Column(BigInteger , nullable=False)
+  sales_close : Column(DECIMAL(precision=11 , scale=3) , default=None)
+  saled_at : datetime = Column(
+    DateTime , 
+    nullable=True , 
+    default=None,
+  )
   user_id = Column(String(36), ForeignKey('users.id'))
   user : UserModel = relationship(
     'UserModel',

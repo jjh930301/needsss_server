@@ -13,7 +13,7 @@ class KrTickerModel(Base) :
   __metaclass__=meta_obj
 
   symbol : str = Column(String(12) , nullable=False , index=True , primary_key=True)
-  market : int = Column(TINYINT , nullable=False)
+  market : int = Column(TINYINT , nullable=True)
   index : int = Column(SMALLINT , nullable=True)
   name : str = Column(String(100) , nullable=False , index=True)
   bps : int = Column(DECIMAL(precision=11 , scale=2) , nullable=True , default=0)

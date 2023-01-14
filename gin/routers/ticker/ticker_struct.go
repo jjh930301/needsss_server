@@ -25,12 +25,12 @@ type OneTickerResponse struct {
 	Symbol    string                `gorm:"column:symbol;type:varchar(12);not null;primary_key" json:"symbol,omitempty"` //index
 	Merket    int                   `gorm:"column:market;type:tinyint;not null" json:"market,omitempty"`
 	Name      string                `gorm:"column:name;type:varchar(100);not null" json:"name,omitempty"` //index
-	MarketCap decimal.Decimal       `gorm:"column:market_cap;type:decimal(17,0);default null" json:"market_cap,omitempty"`
-	Bps       decimal.Decimal       `gorm:"column:bps;type:decimal(11,2);default 0" json:"bps,omitempty"`
-	Per       decimal.Decimal       `gorm:"column:per;type:decimal(11,2);default 0" json:"per,omitempty"`
-	Pbr       decimal.Decimal       `gorm:"column:pbr;type:decimal(11,2);default 0" json:"pbr,omitempty"`
-	Eps       decimal.Decimal       `gorm:"column:eps;type:decimal(11,2);default 0" json:"eps,omitempty"`
-	Div       decimal.Decimal       `gorm:"column:div;type:decimal(11,2);default 0" json:"div,omitempty"`
-	Dps       decimal.Decimal       `gorm:"column:dps;type:decimal(11,2);default 0" json:"dps,omitempty"`
+	MarketCap decimal.Decimal       `gorm:"column:market_cap;type:decimal(17,0);default:null" json:"market_cap,omitempty"`
+	Bps       decimal.Decimal       `gorm:"column:bps;type:decimal(11,2);default:0" json:"bps,omitempty"`
+	Per       decimal.Decimal       `gorm:"column:per;type:decimal(11,2);default:0" json:"per,omitempty"`
+	Pbr       decimal.Decimal       `gorm:"column:pbr;type:decimal(11,2);default:0" json:"pbr,omitempty"`
+	Eps       decimal.Decimal       `gorm:"column:eps;type:decimal(11,2);default:0" json:"eps,omitempty"`
+	Div       decimal.Decimal       `gorm:"column:div;type:decimal(11,2);default:0" json:"div,omitempty"`
+	Dps       decimal.Decimal       `gorm:"column:dps;type:decimal(11,2);default:0" json:"dps,omitempty"`
 	Charts    []oneTickerChartModel `gorm:"foreignkey:TickerSymbol" json:"charts,omitempty"`
 }

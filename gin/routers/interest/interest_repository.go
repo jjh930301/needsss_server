@@ -1,6 +1,7 @@
 package interest
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -15,18 +16,17 @@ func getList(offset int) (*[]InterestListResponse, error) {
 	var err error
 	var interestes []interestList
 	var userModel interestUserModel
+	var tickerModel interestTickerModel
 	var responseModel []InterestListResponse
-	uuid, err := uuid.FromString("b733cfae-1310-43ba-8dd1-ee337a64b980")
 	if err != nil {
 		return nil, err
 	}
 	database.DB.Model(&models.InterestedTickerModel{}).Preload("User", func(user *gorm.DB) *gorm.DB {
-		return user.Model(&models.UserModel{}).Where(&models.UserModel{
-			ID: uuid,
-		}).First(&userModel)
-	}).Where(
-		&models.InterestedTickerModel{UserId: uuid},
-	).Order("date_time desc").Limit(20).Offset(offset).Find(&interestes)
+		return user.Model(&models.UserModel{}).First(&userModel)
+	}).Preload("Ticker", func(ticker *gorm.DB) *gorm.DB {
+		return ticker.Model(&models.KrTickerModel{}).First(&tickerModel)
+	}).Order("date_time desc").Limit(20).Offset(offset).Find(&interestes)
+
 	for _, i := range interestes {
 		var chartModel interestTickerChartModel
 		database.DB.Model(&models.KrTickerChartsModel{}).Where(&models.KrTickerChartsModel{
@@ -78,17 +78,38 @@ func setList(userId string, code string) (bool, error) {
 
 // hard delete
 func deleteList(id string, body *DeleteIntereestBody) error {
-
 	uuid, _ := uuid.FromString(id)
 	date, parseErr := time.Parse("2006-01-02", body.Date)
 	if parseErr != nil {
-		return fmt.Errorf("Cannot string to date")
+		return errors.New("")
 	}
 	err := database.DB.Where(&models.InterestedTickerModel{
 		UserId:       uuid,
 		TickerSymbol: body.Code,
 		Date:         date,
 	}).Delete(&models.InterestedTickerModel{}).Error
-	fmt.Println(err)
 	return err
+}
+
+func saleInterest(
+	id string,
+	body SaleInterestBody,
+	now time.Time,
+) bool {
+	uuid, _ := uuid.FromString(id)
+	date, _ := time.Parse("2006-01-02", body.Date)
+	var recent recentChart
+	database.DB.Model(&models.KrTickerChartsModel{}).Where(&models.KrTickerChartsModel{
+		Symbol: body.Code,
+	}).Order("date desc").First(&recent)
+	result := database.DB.Where(&models.InterestedTickerModel{
+		UserId:       uuid,
+		Date:         date,
+		TickerSymbol: body.Code,
+	}).Updates(&models.InterestedTickerModel{
+		SaledAt:   now,
+		SaleClose: recent.Close,
+	}).RowsAffected
+
+	return result != 0
 }

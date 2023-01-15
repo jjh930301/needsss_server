@@ -24,7 +24,7 @@ func regist(body *RegistBody) (*models.UserModel, error) {
 		return nil, err
 	}
 
-	return user, err
+	return user, nil
 }
 
 func updateRefreshToken(id uuid.UUID, refreshToken string) {
@@ -35,11 +35,18 @@ func updateRefreshToken(id uuid.UUID, refreshToken string) {
 	})
 }
 
-func findOne(email string, pw string) LoginResponse {
-	var model LoginResponse
+func findRefreshToken(id uuid.UUID) string {
+	var user tokenUserInfo
+	database.DB.Model(&models.UserModel{}).Where(&models.UserModel{
+		ID: id,
+	}).Limit(1).Scan(&user)
+	return user.RefreshToken
+}
+
+func findByEmail(email string) *UserResponse {
+	var model *UserResponse
 	database.DB.Model(&models.UserModel{}).Where(&models.UserModel{
 		Email: email,
-	}).Scan(&model)
-
+	}).Limit(1).Scan(&model)
 	return model
 }

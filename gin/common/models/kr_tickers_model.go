@@ -19,7 +19,7 @@ type KrTickerModel struct {
 	Dps            decimal.Decimal         `gorm:"column:dps;type:decimal(11,2);default:0" json:"dps,omitempty"`
 	Sector         string                  `gorm:"column:sector;type:varchar(150)" json:"sector,omitempty"`
 	Industry       string                  `gorm:"column:industry;type:varchar(150)" json:"industry,omitempty"`
-	ListingDate    time.Time               `gorm:"column:listing_date;default:null:" json:"listing_date,omitempty"`
+	ListingDate    time.Time               `gorm:"column:listing_date;default:null" json:"listing_date,omitempty"`
 	SettleMonth    string                  `gorm:"column:settle_month;type:varchar(10)" json:"settle_month,omitempty"`
 	Representative string                  `gorm:"column:representative;type:varchar(100)" json:"representative,omitempty"`
 	Homepage       string                  `gorm:"column:homepage;type:varchar(200)" json:"homepage,omitempty"`

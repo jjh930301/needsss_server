@@ -1,7 +1,10 @@
 package constants
 
-const UserTableName string = "users"
-const InterestedTickerTableName string = "interested_tickers"
-const KrTickerChartTableName string = "kr_ticker_charts"
-const KrTickerTableName string = "kr_tickers"
-const KrTickerCommentTableName string = "kr_ticker_comments"
+const (
+	UserTableName             string = "users"
+	InterestedTickerTableName string = "interested_tickers"
+	KrTickerChartTableName    string = "kr_ticker_charts"
+	KrTickerTableName         string = "kr_tickers"
+	KrTickerCommentTableName  string = "kr_ticker_comments"
+	LogTabeName               string = "logs"
+)

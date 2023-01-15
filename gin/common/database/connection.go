@@ -41,6 +41,7 @@ func connection() *gorm.DB {
 	}
 	if os.Getenv("ENV") != "production" {
 		db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(
+			&models.LogModel{},
 			&models.UserModel{},
 			&models.KrTickerModel{},
 			&models.InterestedTickerModel{},

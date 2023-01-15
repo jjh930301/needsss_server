@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"errors"
 	"os"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/jjh930301/market/common/structs"
 )
 
 func CreateToken(
@@ -32,7 +34,7 @@ func CreateToken(
 	// 1 == refresh token
 	if tokenType == 1 {
 		var err error
-		atClaims["exp"] = time.Now().Add(time.Minute * 24).Unix()
+		atClaims["exp"] = time.Now().Add(time.Minute * 60 * 24 * 7).Unix()
 		at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 		token, err := at.SignedString([]byte(os.Getenv("JWT_REFRESH_SECRET")))
 		if err != nil {
@@ -41,4 +43,25 @@ func CreateToken(
 		return token, nil
 	}
 	return "", nil
+}
+
+// t = 0 access
+// t = 1 refresh
+func Verification(
+	tokenString string,
+	claims *structs.AuthClaim,
+	t int,
+) (*jwt.Token, error) {
+	key := func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		if t == 0 {
+			return []byte(os.Getenv("JWT_ACCESS_SECRET")), nil
+		} else {
+			return []byte(os.Getenv("JWT_REFRESH_SECRET")), nil
+		}
+	}
+
+	return jwt.ParseWithClaims(tokenString, claims, key)
 }

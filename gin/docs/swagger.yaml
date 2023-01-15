@@ -5,12 +5,18 @@ definitions:
         type: string
       email:
         type: string
+      id:
+        type: string
       mobile:
         type: string
       nickname:
         type: string
+      profile_image:
+        type: string
       refresh_token:
         type: string
+      type:
+        type: integer
     type: object
   auth.RegistBody:
     properties:
@@ -23,17 +29,56 @@ definitions:
       password:
         type: string
     type: object
+  auth.TokenBody:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  auth.TokenResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
   auth.UserResponse:
     properties:
       access_token:
         type: string
       created_at:
         type: string
+      email:
+        type: string
       id:
         type: string
-      mobile:
+      nickname:
+        type: string
+      profile_image:
         type: string
       refresh_token:
+        type: string
+    type: object
+  comment.NewCommentBody:
+    properties:
+      code:
+        type: string
+      comment:
+        type: string
+    type: object
+  comment.TickerCommentsResponse:
+    properties:
+      comment:
+        type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/comment.commentUser'
+    type: object
+  comment.commentUser:
+    properties:
+      nickname:
+        type: string
+      profile_image:
         type: string
     type: object
   interest.DeleteIntereestBody:
@@ -49,6 +94,13 @@ definitions:
         $ref: '#/definitions/interest.interestTickerChartModel'
       ticker:
         $ref: '#/definitions/interest.interestList'
+    type: object
+  interest.SaleInterestBody:
+    properties:
+      code:
+        type: string
+      date:
+        type: string
     type: object
   interest.SetInterestBody:
     properties:
@@ -68,6 +120,8 @@ definitions:
       symbol:
         description: index
         type: string
+      ticker:
+        $ref: '#/definitions/interest.interestTickerModel'
       type:
         type: integer
       user:
@@ -84,7 +138,88 @@ definitions:
       volume:
         type: string
     type: object
+  interest.interestTickerModel:
+    properties:
+      homepage:
+        type: string
+    type: object
   interest.interestUserModel:
+    properties:
+      nickname:
+        type: string
+    type: object
+  ticker.OneTickerChartResponse:
+    properties:
+      close:
+        type: number
+      date:
+        type: string
+      high:
+        type: number
+      low:
+        type: number
+      open:
+        type: number
+      percent:
+        type: string
+      volume:
+        type: string
+    type: object
+  ticker.OneTickerResponse:
+    properties:
+      bps:
+        type: number
+      chart:
+        items:
+          $ref: '#/definitions/ticker.OneTickerChartResponse'
+        type: array
+      div:
+        type: number
+      dps:
+        type: number
+      eps:
+        type: number
+      homepage:
+        type: string
+      industry:
+        type: string
+      listing_date:
+        type: string
+      market:
+        type: integer
+      market_cap:
+        type: number
+      name:
+        description: index
+        type: string
+      pbr:
+        type: number
+      per:
+        type: number
+      representative:
+        type: string
+      sector:
+        type: string
+      settle_month:
+        type: string
+      symbol:
+        description: index
+        type: string
+    type: object
+  ticker.SearchTickerResponse:
+    properties:
+      homepage:
+        type: string
+      market:
+        type: integer
+      name:
+        description: index
+        type: string
+      symbol:
+        description: index
+        type: string
+    type: object
+  user.NicknameBody:
     properties:
       nickname:
         type: string
@@ -120,8 +255,11 @@ paths:
     post:
       consumes:
       - application/json
-      description: 2001 성공 \n 4001 missing bodies \n 4002 Cannot create user \n 4003
-        Type is not match
+      description: |-
+        2001 성공
+        4001 missing bodies
+        4002 Cannot create user
+        4003 Type is not match
       parameters:
       - description: body data
         in: body
@@ -139,6 +277,32 @@ paths:
       summary: 회원가입
       tags:
       - auth
+  /auth/token:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        2000 성공
+        4001 required refresh_token
+        4101 required login
+        4004 다른 웹에서 로그인되어 있습니다 다시 로그인 해주세요
+      parameters:
+      - description: refresh token
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/auth.TokenBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.TokenResponse'
+      summary: 토큰
+      tags:
+      - auth
   /health/check:
     get:
       consumes:
@@ -153,7 +317,11 @@ paths:
     delete:
       consumes:
       - application/json
-      description: 2000 성공 \n
+      description: |-
+        2000 성공
+        4001 missing bodies
+        4002 cannot delete[sql]
+        4101 required login
       parameters:
       - description: delete interest
         in: body
@@ -172,7 +340,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 2000 성공 \n
+      description: 2000 성공
       parameters:
       - description: offset count
         in: query
@@ -191,7 +359,11 @@ paths:
     post:
       consumes:
       - application/json
-      description: 2000 성공 \n
+      description: |-
+        2000 성공
+        4001 missing bodies
+        4002 cannot add ticker
+        4101 required login
       parameters:
       - description: add interest
         in: body
@@ -211,27 +383,221 @@ paths:
       summary: 관심종목 추가
       tags:
       - interest
+  /interest/sale:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        2000 성공
+        4002 missing bodies
+        4101 required login
+        4004 Cannot sale
+        4005 The time to sale has over
+      parameters:
+      - description: sale interest
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/interest.SaleInterestBody'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: 관심종목 매도
+      tags:
+      - interest
   /ticker/{ticker}:
     get:
       consumes:
       - application/json
-      description: 2000 성공
+      description: |-
+        2000 성공
+        4001 required count
+        4002 cannot found list
       parameters:
       - description: code
         in: path
         name: ticker
         required: true
         type: string
-      - description: offset count
+      - description: count
         in: query
-        name: offset
+        name: count
         type: integer
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ticker.OneTickerResponse'
       summary: 종목 가져오기
       tags:
       - ticker
+  /ticker/chart/{ticker}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        2000 성공
+        2001 empty response
+        4001 missing count
+        4002 date format error yyyy-mm-dd
+      parameters:
+      - description: code
+        in: path
+        name: ticker
+        required: true
+        type: string
+      - description: 마지막 날짜
+        in: query
+        name: date
+        type: string
+      - description: count
+        in: query
+        name: count
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ticker.OneTickerChartResponse'
+            type: array
+      summary: 종목 차트 가져오기
+      tags:
+      - ticker
+  /ticker/comment:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        2000 성공
+        4101 required login
+        4003 empty comment or code
+        4004 missing bodies
+      parameters:
+      - description: ticker comment
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/comment.NewCommentBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/comment.TickerCommentsResponse'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: 티커 코멘트 등록
+      tags:
+      - comment
+  /ticker/comment/{ticker}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        2000 성공
+        4101 required login
+        4004 count , created_at error
+      parameters:
+      - description: code
+        in: path
+        name: ticker
+        required: true
+        type: string
+      - description: count
+        in: query
+        name: count
+        required: true
+        type: integer
+      - description: created_at
+        in: query
+        name: created_at
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/comment.TickerCommentsResponse'
+            type: array
+      summary: 티커 코멘트 목록
+      tags:
+      - comment
+  /ticker/search:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        2000 성공
+        4001 offset and count are int type
+      parameters:
+      - description: 검색할 종목명 , 코드
+        in: query
+        name: word
+        required: true
+        type: string
+      - description: 가지고 있는 list.length
+        in: query
+        name: offset
+        type: integer
+      - description: count
+        in: query
+        name: count
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ticker.SearchTickerResponse'
+            type: array
+      summary: 종목 검색
+      tags:
+      - ticker
+  /user/nickname:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        2000 성공
+        2001 nickname is exists
+        4001 required nickname
+        4101 required login
+      parameters:
+      - description: nickname
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/user.NicknameBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.UserResponse'
+      security:
+      - BearerAuth: []
+      summary: 닉네임 변경
+      tags:
+      - user
 securityDefinitions:
   BearerAuth:
     in: header

@@ -16,7 +16,12 @@ func main() {
 	database.InitDb()
 	r := routers.InitRouter()
 	docs.SwaggerInfo.Title = "관심종목 Api Documentation"
-	docs.SwaggerInfo.Description = `Use Bearer Token`
+	docs.SwaggerInfo.Description = `
+		Use Bearer Token
+		market type
+		0 = KOSPI
+		1 = KOSDAQ
+	`
 
 	// 127.0.0.1:8090/docs/index.html
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

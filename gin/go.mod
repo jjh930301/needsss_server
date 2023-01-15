@@ -14,7 +14,10 @@ require (
 	gorm.io/gorm v1.24.3
 )
 
-require gopkg.in/yaml.v3 v3.0.1 // indirect
+require (
+	github.com/google/go-cmp v0.5.8 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect

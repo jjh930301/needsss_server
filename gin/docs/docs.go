@@ -55,7 +55,7 @@ const docTemplate = `{
         },
         "/auth/regist": {
             "post": {
-                "description": "2001 성공 \\n 4001 missing bodies \\n 4002 Cannot create user \\n 4003 Type is not match",
+                "description": "2001 성공\n4001 missing bodies\n4002 Cannot create user\n4003 Type is not match",
                 "consumes": [
                     "application/json"
                 ],
@@ -87,6 +87,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/token": {
+            "post": {
+                "description": "2000 성공\n4001 required refresh_token\n4101 required login\n4004 다른 웹에서 로그인되어 있습니다 다시 로그인 해주세요",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "토큰",
+                "parameters": [
+                    {
+                        "description": "refresh token",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.TokenBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.TokenResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/health/check": {
             "get": {
                 "consumes": [
@@ -104,7 +138,7 @@ const docTemplate = `{
         },
         "/interest": {
             "get": {
-                "description": "2000 성공 \\n",
+                "description": "2000 성공",
                 "consumes": [
                     "application/json"
                 ],
@@ -138,7 +172,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "2000 성공 \\n",
+                "description": "2000 성공\n4001 missing bodies\n4002 cannot add ticker\n4101 required login",
                 "consumes": [
                     "application/json"
                 ],
@@ -175,7 +209,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "2000 성공 \\n",
+                "description": "2000 성공\n4001 missing bodies\n4002 cannot delete[sql]\n4101 required login",
                 "consumes": [
                     "application/json"
                 ],
@@ -200,9 +234,226 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/interest/sale": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "2000 성공\n4002 missing bodies\n4101 required login\n4004 Cannot sale\n4005 The time to sale has over",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "interest"
+                ],
+                "summary": "관심종목 매도",
+                "parameters": [
+                    {
+                        "description": "sale interest",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/interest.SaleInterestBody"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/ticker/chart/{ticker}": {
+            "get": {
+                "description": "2000 성공\n2001 empty response\n4001 missing count\n4002 date format error yyyy-mm-dd",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticker"
+                ],
+                "summary": "종목 차트 가져오기",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "code",
+                        "name": "ticker",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "마지막 날짜",
+                        "name": "date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "count",
+                        "name": "count",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ticker.OneTickerChartResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ticker/comment": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "2000 성공\n4101 required login\n4003 empty comment or code\n4004 missing bodies",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "티커 코멘트 등록",
+                "parameters": [
+                    {
+                        "description": "ticker comment",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/comment.NewCommentBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/comment.TickerCommentsResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ticker/comment/{ticker}": {
+            "get": {
+                "description": "2000 성공\n4101 required login\n4004 count , created_at error",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "comment"
+                ],
+                "summary": "티커 코멘트 목록",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "code",
+                        "name": "ticker",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "count",
+                        "name": "count",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "created_at",
+                        "name": "created_at",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/comment.TickerCommentsResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ticker/search": {
+            "get": {
+                "description": "2000 성공\n4001 offset and count are int type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticker"
+                ],
+                "summary": "종목 검색",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "검색할 종목명 , 코드",
+                        "name": "word",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "가지고 있는 list.length",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "count",
+                        "name": "count",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ticker.SearchTickerResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/ticker/{ticker}": {
             "get": {
-                "description": "2000 성공",
+                "description": "2000 성공\n4001 required count\n4002 cannot found list",
                 "consumes": [
                     "application/json"
                 ],
@@ -223,12 +474,58 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "offset count",
-                        "name": "offset",
+                        "description": "count",
+                        "name": "count",
                         "in": "query"
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ticker.OneTickerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/nickname": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "2000 성공\n2001 nickname is exists\n4001 required nickname\n4101 required login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "닉네임 변경",
+                "parameters": [
+                    {
+                        "description": "nickname",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.NicknameBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.UserResponse"
+                        }
+                    }
+                }
             }
         }
     },
@@ -242,14 +539,23 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "string"
+                },
                 "mobile": {
                     "type": "string"
                 },
                 "nickname": {
                     "type": "string"
                 },
+                "profile_image": {
+                    "type": "string"
+                },
                 "refresh_token": {
                     "type": "string"
+                },
+                "type": {
+                    "type": "integer"
                 }
             }
         },
@@ -270,6 +576,25 @@ const docTemplate = `{
                 }
             }
         },
+        "auth.TokenBody": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.TokenResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
         "auth.UserResponse": {
             "type": "object",
             "properties": {
@@ -279,13 +604,55 @@ const docTemplate = `{
                 "created_at": {
                     "type": "string"
                 },
+                "email": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
-                "mobile": {
+                "nickname": {
+                    "type": "string"
+                },
+                "profile_image": {
                     "type": "string"
                 },
                 "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "comment.NewCommentBody": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "comment": {
+                    "type": "string"
+                }
+            }
+        },
+        "comment.TickerCommentsResponse": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/comment.commentUser"
+                }
+            }
+        },
+        "comment.commentUser": {
+            "type": "object",
+            "properties": {
+                "nickname": {
+                    "type": "string"
+                },
+                "profile_image": {
                     "type": "string"
                 }
             }
@@ -309,6 +676,17 @@ const docTemplate = `{
                 },
                 "ticker": {
                     "$ref": "#/definitions/interest.interestList"
+                }
+            }
+        },
+        "interest.SaleInterestBody": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
                 }
             }
         },
@@ -339,6 +717,9 @@ const docTemplate = `{
                     "description": "index",
                     "type": "string"
                 },
+                "ticker": {
+                    "$ref": "#/definitions/interest.interestTickerModel"
+                },
                 "type": {
                     "type": "integer"
                 },
@@ -364,7 +745,129 @@ const docTemplate = `{
                 }
             }
         },
+        "interest.interestTickerModel": {
+            "type": "object",
+            "properties": {
+                "homepage": {
+                    "type": "string"
+                }
+            }
+        },
         "interest.interestUserModel": {
+            "type": "object",
+            "properties": {
+                "nickname": {
+                    "type": "string"
+                }
+            }
+        },
+        "ticker.OneTickerChartResponse": {
+            "type": "object",
+            "properties": {
+                "close": {
+                    "type": "number"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "high": {
+                    "type": "number"
+                },
+                "low": {
+                    "type": "number"
+                },
+                "open": {
+                    "type": "number"
+                },
+                "percent": {
+                    "type": "string"
+                },
+                "volume": {
+                    "type": "string"
+                }
+            }
+        },
+        "ticker.OneTickerResponse": {
+            "type": "object",
+            "properties": {
+                "bps": {
+                    "type": "number"
+                },
+                "chart": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ticker.OneTickerChartResponse"
+                    }
+                },
+                "div": {
+                    "type": "number"
+                },
+                "dps": {
+                    "type": "number"
+                },
+                "eps": {
+                    "type": "number"
+                },
+                "homepage": {
+                    "type": "string"
+                },
+                "industry": {
+                    "type": "string"
+                },
+                "listing_date": {
+                    "type": "string"
+                },
+                "market": {
+                    "type": "integer"
+                },
+                "market_cap": {
+                    "type": "number"
+                },
+                "name": {
+                    "description": "index",
+                    "type": "string"
+                },
+                "pbr": {
+                    "type": "number"
+                },
+                "per": {
+                    "type": "number"
+                },
+                "representative": {
+                    "type": "string"
+                },
+                "sector": {
+                    "type": "string"
+                },
+                "settle_month": {
+                    "type": "string"
+                },
+                "symbol": {
+                    "description": "index",
+                    "type": "string"
+                }
+            }
+        },
+        "ticker.SearchTickerResponse": {
+            "type": "object",
+            "properties": {
+                "homepage": {
+                    "type": "string"
+                },
+                "market": {
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "index",
+                    "type": "string"
+                },
+                "symbol": {
+                    "description": "index",
+                    "type": "string"
+                }
+            }
+        },
+        "user.NicknameBody": {
             "type": "object",
             "properties": {
                 "nickname": {

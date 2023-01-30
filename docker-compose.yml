@@ -25,6 +25,9 @@ services:
     build:
       context: "./gin"
       dockerfile: Dockerfile
+      args:
+        - GITACCOUNT=${GIT_ACCOUNT}
+        - GITTOKEN=${GIT_TOKEN}
     container_name: gin
     restart: unless-stopped
     ports:

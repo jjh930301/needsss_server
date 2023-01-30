@@ -2,9 +2,9 @@ package user
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jjh930301/market/common/res"
-	"github.com/jjh930301/market/common/structs"
-	"github.com/jjh930301/market/common/utils"
+	"github.com/jjh930301/needsss_common/res"
+	"github.com/jjh930301/needsss_common/structs"
+	"github.com/jjh930301/needsss_common/utils"
 	uuid "github.com/satori/go.uuid"
 )
 

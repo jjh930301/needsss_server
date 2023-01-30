@@ -1,14 +1,15 @@
 package auth
 
 import (
+	"context"
+	"os"
+
 	"github.com/gin-gonic/gin"
-	"github.com/jjh930301/market/common/constants"
-	"github.com/jjh930301/market/common/models"
-	"github.com/jjh930301/market/common/res"
-	"github.com/jjh930301/market/common/structs"
-	"github.com/jjh930301/market/common/utils"
-	"github.com/jjh930301/market/routers/logs"
+	"github.com/jjh930301/needsss_common/res"
+	"github.com/jjh930301/needsss_common/structs"
+	"github.com/jjh930301/needsss_common/utils"
 	uuid "github.com/satori/go.uuid"
+	idtoken "google.golang.org/api/idtoken"
 )
 
 // @Tags auth
@@ -52,74 +53,42 @@ func Token(c *gin.Context) {
 }
 
 // @Tags auth
-// @Summary 회원가입
-// @Description 2001 성공
-// @Description 4001 missing bodies
-// @Description 4002 Cannot create user
-// @Description 4003 Type is not match
-// @Accept  json
-// @Produce  json
-// @Router /auth/regist [post]
-// @Param data body RegistBody true "body data".
-// @Success 200 {object} UserResponse
-func Register(c *gin.Context) {
-	var body RegistBody
-	if err := c.ShouldBindJSON(&body); err != nil {
-		res.BadRequest(c, "Missing Bodies", 4001)
-		panic(nil)
-	}
-	var repoErr error
-	var user *models.UserModel
-	user, repoErr = regist(&body)
-	if repoErr != nil {
-		res.BadRequest(c, "Cannot create new user", 4002)
-		panic(nil)
-	}
-
-	accessToken, _ := utils.CreateToken(user.ID.String(), user.Email, int(user.Type), 0)
-	refreshToken, _ := utils.CreateToken(user.ID.String(), user.Email, int(user.Type), 1)
-
-	updateRefreshToken(user.ID, refreshToken)
-	response := UserResponse{
-		Id:           user.ID.String(),
-		Nickname:     user.NickName,
-		CreatedAt:    user.CreatedAt,
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-	}
-	go logs.Log(c.ClientIP(), constants.POST, constants.AuthGroup+constants.Regist)
-	res.Created(c, "Successfully", response, 2001)
-}
-
-// @Tags auth
-// @Summary 로그인
+// @Summary 구글 로그인
 // @Description 2000 성공
 // @Accept json
 // @Produce json
-// @Param email query string false "email"
-// @Param key query string false "key"
-// @Router /auth/login [get]
-// @Success 200 {object} LoginResponse
-func Login(c *gin.Context) {
-	email := c.Request.URL.Query().Get("email")
-	key := c.Request.URL.Query().Get("key")
-	if email == "" || key == "" {
-		res.BadRequest(c, "Required key and email", 4001)
+// @Router /auth/google/login [get]
+// func GoogleLogin(c *gin.Context) {
+// 	token := utils.GetGoogleToken()
+// 	url := utils.GetGoogleLoginURL(token)
+// 	c.Redirect(http.StatusMovedPermanently, url)
+// }
+
+// @Tags auth
+// @Summary 구글 idtoken
+// @Description 2000 성공
+// @Description 2001 신규 유저 닉네임 입력 화면으로 이동
+// @Description 4004 required token
+// @Description 4003 not verify id token
+// @Accept json
+// @Produce json
+// @Param token query string false "idtoken"
+// @Router /auth/google/token [get]
+// @Success 200 {object} UserResponse
+func GoogleIDToken(c *gin.Context) {
+	token := c.Query("token")
+	if token == "" {
+		res.BadRequest(c, "Required token", 4004)
 		panic(nil)
 	}
-	pw := utils.DecryptBase64(key)
-	if pw == "" {
-		res.Forbidden(c, "", 4102)
-		panic(nil)
+	payload, err := idtoken.Validate(context.Background(), token, os.Getenv("GOOGLE_CLIENT_ID"))
+	if err != nil {
+		res.Forbidden(c, "Cannot verify google id token", 4003)
+		panic(err)
 	}
-	model := findByEmail(email)
-	flag := utils.CheckPasswordHash([]byte(pw), []byte(model.Password))
-	if !flag {
-		res.Forbidden(c, "Password is not match", 4103)
-		panic(nil)
-	}
-	accessToken, _ := utils.CreateToken(model.Id, model.Email, int(model.Type), 0)
-	refreshToken, refreshError := utils.CreateToken(model.Id, model.Email, int(model.Type), 1)
+	user, t := googleRegist(payload.Claims)
+	accessToken, _ := utils.CreateToken(user.Id, user.Email, int(user.Type), 0)
+	refreshToken, refreshError := utils.CreateToken(user.Id, user.Email, int(user.Type), 1)
 	if refreshError != nil {
 		res.BadRequest(
 			c,
@@ -128,12 +97,15 @@ func Login(c *gin.Context) {
 		)
 		panic(nil)
 	}
-	uuid, _ := uuid.FromString(model.Id)
-	updateRefreshToken(uuid, refreshToken) // wait this function
+	uuid, _ := uuid.FromString(user.Id)
+	updateRefreshToken(uuid, refreshToken)
 
-	model.AccessToken = accessToken
-	model.RefreshToken = refreshToken
-	go logs.Log(c.ClientIP(), constants.GET, constants.AuthGroup+constants.Login)
-	res.Ok(c, "Successfully login", model, 2000)
+	user.AccessToken = accessToken
+	user.RefreshToken = refreshToken
 
+	if t == 1 {
+		res.Ok(c, "Successfully login", user, 2000)
+		panic(nil)
+	}
+	res.Ok(c, "Successfully new user", user, 2001)
 }

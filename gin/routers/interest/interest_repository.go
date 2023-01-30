@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jjh930301/market/common/constants"
-	"github.com/jjh930301/market/common/database"
-	"github.com/jjh930301/market/common/models"
+	"github.com/jjh930301/needsss_common/constants"
+	"github.com/jjh930301/needsss_common/database"
+	"github.com/jjh930301/needsss_common/models"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
@@ -22,9 +22,9 @@ func getList(offset int) (*[]InterestListResponse, error) {
 		return nil, err
 	}
 	database.DB.Model(&models.InterestedTickerModel{}).Preload("User", func(user *gorm.DB) *gorm.DB {
-		return user.Model(&models.UserModel{}).First(&userModel)
+		return user.Model(&models.UserModel{}).Find(&userModel)
 	}).Preload("Ticker", func(ticker *gorm.DB) *gorm.DB {
-		return ticker.Model(&models.KrTickerModel{}).First(&tickerModel)
+		return ticker.Model(&models.KrTickerModel{}).Find(&tickerModel)
 	}).Order("date_time desc").Limit(20).Offset(offset).Find(&interestes)
 
 	for _, i := range interestes {
@@ -88,6 +88,7 @@ func deleteList(id string, body *DeleteIntereestBody) error {
 		TickerSymbol: body.Code,
 		Date:         date,
 	}).Delete(&models.InterestedTickerModel{}).Error
+	fmt.Println(err)
 	return err
 }
 

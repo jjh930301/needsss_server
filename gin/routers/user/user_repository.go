@@ -3,9 +3,9 @@ package user
 import (
 	"encoding/json"
 
-	"github.com/jjh930301/market/common/database"
-	"github.com/jjh930301/market/common/models"
 	"github.com/jjh930301/market/routers/auth"
+	"github.com/jjh930301/needsss_common/database"
+	"github.com/jjh930301/needsss_common/models"
 	uuid "github.com/satori/go.uuid"
 )
 

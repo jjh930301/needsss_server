@@ -1,12 +1,13 @@
 package comment
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jjh930301/market/common/res"
-	"github.com/jjh930301/market/common/structs"
+	"github.com/jjh930301/needsss_common/res"
+	"github.com/jjh930301/needsss_common/structs"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -29,6 +30,7 @@ func GetTickerComments(c *gin.Context) {
 	//2023-01-15T09:38:18Z
 	lastTime, err := time.Parse("2006-01-02T15:04:05Z", createdAt)
 	if err != nil {
+		fmt.Println(err)
 		res.BadRequest(c, "Required Time format 2006-01-02T15:04:05Z", 4004)
 		panic(err)
 	}

@@ -3,8 +3,8 @@ package ticker
 import (
 	"time"
 
-	"github.com/jjh930301/market/common/database"
-	"github.com/jjh930301/market/common/models"
+	"github.com/jjh930301/needsss_common/database"
+	"github.com/jjh930301/needsss_common/models"
 	"gorm.io/gorm"
 )
 

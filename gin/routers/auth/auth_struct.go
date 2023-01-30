@@ -2,8 +2,6 @@ package auth
 
 import (
 	"time"
-
-	uuid "github.com/satori/go.uuid"
 )
 
 type tokenUserInfo struct {
@@ -15,18 +13,18 @@ type TokenBody struct {
 }
 
 type TokenResponse struct {
-	RefreshToken string `json:"refresh_token"`
-	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"` // refresh token
+	AccessToken  string `json:"access_token"`  // access token
 }
 
 type UserResponse struct {
-	Id           string    `json:"id"`
+	Id           string    `json:"-"`
 	Type         int       `json:"-"`
-	Email        string    `json:"email"`
+	Email        string    `json:"email"` // email 마우스 호버시에만 보이게
 	Password     string    `json:"-"`
-	Nickname     string    `json:"nickname"`
-	ProfileImage string    `json:"profile_image"`
-	CreatedAt    time.Time `json:"created_at"`
+	Nickname     string    `json:"nickname"`      // nickname
+	ProfileImage string    `json:"profile_image"` // google login시 받아오는 profile image
+	CreatedAt    time.Time `json:"created_at"`    // 가입일
 	AccessToken  string    `json:"access_token"`
 	RefreshToken string    `json:"refresh_token"`
 }
@@ -38,14 +36,7 @@ type RegistBody struct {
 	NickName string `json:"nickname"`
 }
 
-type LoginResponse struct {
-	ID           uuid.UUID `gorm:"column:id;type:varchar(36);primary_key" json:"id"`
-	Type         int8      `grom:"column:type;type:tinyint;default:0" json:"type"`
-	NickName     string    `gorm:"column:nickname;type:varchar(30);default:null" json:"nickname,omitempty"`
-	Email        string    `gorm:"column:email;type:varchar(100);not null" json:"email"`
-	Password     string    `gorm:"column:password;type:varchar(255);default:null" json:"-"`
-	Mobile       string    `gorm:"column:mobile;type:varchar(12);default:null" json:"mobile"`
-	ProfileImage string    `gorm:"column:profile_image;type:text;default:null" json:"profile_image"`
-	AccessToken  string    `gorm:"-" json:"access_token"`
-	RefreshToken string    `gorm:"-" json:"refresh_token"`
+type GoogleBody struct {
+	Email        string `json:"email"`
+	ProfileImage string `json:"profile_image"`
 }

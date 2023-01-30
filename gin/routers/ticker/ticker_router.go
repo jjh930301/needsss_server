@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jjh930301/market/common/constants"
-	"github.com/jjh930301/market/common/res"
 	"github.com/jjh930301/market/routers/logs"
+	"github.com/jjh930301/market/vars"
+	"github.com/jjh930301/needsss_common/res"
 )
 
 // @Tags ticker
@@ -44,7 +44,7 @@ func FindOne(c *gin.Context) {
 		)
 		panic(nil)
 	}
-	go logs.Log(c.ClientIP(), constants.GET, constants.TickerGroup+constants.GetTicker)
+	go logs.Log(c.ClientIP(), vars.GET, vars.TickerGroup+vars.GetTicker)
 	res.Ok(
 		c,
 		"Successfully getting tickers",
@@ -95,7 +95,7 @@ func GetTickerChart(c *gin.Context) {
 		res.Ok(c, "Empty chart", gin.H{"chart": empty}, 2001)
 		panic(nil)
 	}
-	go logs.Log(c.ClientIP(), constants.GET, constants.TickerGroup+constants.GetChart)
+	go logs.Log(c.ClientIP(), vars.GET, vars.TickerGroup+vars.GetChart)
 	res.Ok(c, "Successfully getting charts", chart, 2000)
 }
 

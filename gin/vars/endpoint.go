@@ -1,4 +1,4 @@
-package constants
+package vars
 
 const (
 	GET    int = 0
@@ -18,11 +18,8 @@ const (
 const (
 	Default string = ""
 	//auth
-	Token          string = "/token"
-	Regist         string = "/regist"
-	Login          string = "/login"
-	GoogleLogin    string = "/google/login"
-	GoogleCallback string = "/google/callback"
+	Token         string = "/token"
+	GoogleIDToken string = "/google/token"
 	//tiocker
 	GetTicker    string = "/:ticker"
 	GetChart     string = "/chart/:ticker"

@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jjh930301/market/common/database"
+	"github.com/jjh930301/needsss_common/database"
 )
 
 // @Tags health

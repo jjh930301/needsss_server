@@ -16,6 +16,72 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/google": {
+            "post": {
+                "description": "2000 성공\n2001 신규 유저 닉네임 입력 화면으로 이동\n4004 missing bodies",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "구글 로그인",
+                "deprecated": true,
+                "parameters": [
+                    {
+                        "description": "google email , profile_image",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.GoogleBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.UserResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/google/token": {
+            "get": {
+                "description": "2000 성공\n2001 신규 유저 닉네임 입력 화면으로 이동\n4004 required token\n4003 not verify id token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "구글 idtoken",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "idtoken",
+                        "name": "token",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.UserResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "get": {
                 "description": "2000 성공",
@@ -28,7 +94,8 @@ const docTemplate = `{
                 "tags": [
                     "auth"
                 ],
-                "summary": "로그인",
+                "summary": "로그인 -\u003e 테스트 로그인",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -47,7 +114,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.LoginResponse"
+                            "$ref": "#/definitions/auth.UserResponse"
                         }
                     }
                 }
@@ -66,6 +133,7 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "회원가입",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "body data",
@@ -161,7 +229,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/interest.InterestListResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/interest.InterestListResponse"
+                            }
                         }
                     }
                 }
@@ -530,32 +601,14 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "auth.LoginResponse": {
+        "auth.GoogleBody": {
             "type": "object",
             "properties": {
-                "access_token": {
-                    "type": "string"
-                },
                 "email": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "mobile": {
-                    "type": "string"
-                },
-                "nickname": {
                     "type": "string"
                 },
                 "profile_image": {
                     "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "integer"
                 }
             }
         },
@@ -588,9 +641,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "access_token": {
+                    "description": "access token",
                     "type": "string"
                 },
                 "refresh_token": {
+                    "description": "refresh token",
                     "type": "string"
                 }
             }
@@ -602,18 +657,19 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
+                    "description": "가입일",
                     "type": "string"
                 },
                 "email": {
-                    "type": "string"
-                },
-                "id": {
+                    "description": "email 마우스 호버시에만 보이게",
                     "type": "string"
                 },
                 "nickname": {
+                    "description": "nickname",
                     "type": "string"
                 },
                 "profile_image": {
+                    "description": "google login시 받아오는 profile image",
                     "type": "string"
                 },
                 "refresh_token": {
@@ -636,6 +692,10 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "comment": {
+                    "description": "코멘트",
+                    "type": "string"
+                },
+                "id": {
                     "type": "string"
                 },
                 "updated_at": {
@@ -650,9 +710,11 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "nickname": {
+                    "description": "닉네임",
                     "type": "string"
                 },
                 "profile_image": {
+                    "description": "프로필이미지",
                     "type": "string"
                 }
             }
@@ -702,31 +764,41 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "close": {
-                    "type": "string"
+                    "description": "등록한 시점의 가격",
+                    "type": "number"
                 },
                 "date_time": {
+                    "description": "등록된 시점",
                     "type": "string"
                 },
+                "market": {
+                    "description": "0 KOSPI 1 KOSDAQ",
+                    "type": "integer"
+                },
                 "name": {
+                    "description": "종목이름",
                     "type": "string"
                 },
                 "percent": {
+                    "description": "등록한 시점의 등락률",
                     "type": "string"
                 },
                 "symbol": {
-                    "description": "index",
+                    "description": "종목코드",
                     "type": "string"
                 },
                 "ticker": {
                     "$ref": "#/definitions/interest.interestTickerModel"
                 },
                 "type": {
+                    "description": "현재 사용하지 않습니다.",
                     "type": "integer"
                 },
                 "user": {
                     "$ref": "#/definitions/interest.interestUserModel"
                 },
                 "volume": {
+                    "description": "등록된 시점의 거래량",
                     "type": "string"
                 }
             }
@@ -735,12 +807,15 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "close": {
+                    "description": "현재가",
                     "type": "number"
                 },
                 "percent": {
+                    "description": "현재 등락률",
                     "type": "string"
                 },
                 "volume": {
+                    "description": "현재 거래량",
                     "type": "string"
                 }
             }
@@ -749,6 +824,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "homepage": {
+                    "description": "홈페이지",
                     "type": "string"
                 }
             }
@@ -757,6 +833,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "nickname": {
+                    "description": "등록한 사용자의 닉네임",
                     "type": "string"
                 }
             }
@@ -765,24 +842,31 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "close": {
+                    "description": "종가(현재가)",
                     "type": "number"
                 },
                 "date": {
+                    "description": "날짜",
                     "type": "string"
                 },
                 "high": {
+                    "description": "고가",
                     "type": "number"
                 },
                 "low": {
+                    "description": "저가",
                     "type": "number"
                 },
                 "open": {
+                    "description": "시가",
                     "type": "number"
                 },
                 "percent": {
+                    "description": "등락률",
                     "type": "string"
                 },
                 "volume": {
+                    "description": "거래량",
                     "type": "string"
                 }
             }
@@ -809,37 +893,46 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "homepage": {
+                    "description": "홈페이지 (로고 url)",
                     "type": "string"
                 },
                 "industry": {
                     "type": "string"
                 },
                 "listing_date": {
+                    "description": "상장일",
                     "type": "string"
                 },
                 "market": {
+                    "description": "0 : 코스피 , 1 : 코스닥",
                     "type": "integer"
                 },
                 "market_cap": {
+                    "description": "시가총액",
                     "type": "number"
                 },
                 "name": {
-                    "description": "index",
+                    "description": "종목명",
                     "type": "string"
                 },
                 "pbr": {
+                    "description": "표시",
                     "type": "number"
                 },
                 "per": {
+                    "description": "표시",
                     "type": "number"
                 },
                 "representative": {
+                    "description": "대표자 (표시할 필요없습니다.)",
                     "type": "string"
                 },
                 "sector": {
+                    "description": "표시",
                     "type": "string"
                 },
                 "settle_month": {
+                    "description": "결산월",
                     "type": "string"
                 },
                 "symbol": {
@@ -852,17 +945,19 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "homepage": {
+                    "description": "홈페이지 (로고 url)",
                     "type": "string"
                 },
                 "market": {
+                    "description": "0 코스피 , 1 코스닥",
                     "type": "integer"
                 },
                 "name": {
-                    "description": "index",
+                    "description": "종목명",
                     "type": "string"
                 },
                 "symbol": {
-                    "description": "index",
+                    "description": "코드",
                     "type": "string"
                 }
             }

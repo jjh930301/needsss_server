@@ -1,14 +1,16 @@
 package interest
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jjh930301/market/common/constants"
-	"github.com/jjh930301/market/common/res"
-	"github.com/jjh930301/market/common/structs"
 	"github.com/jjh930301/market/routers/logs"
+	"github.com/jjh930301/market/vars"
+	"github.com/jjh930301/needsss_common/constants"
+	"github.com/jjh930301/needsss_common/res"
+	"github.com/jjh930301/needsss_common/structs"
 )
 
 // @Tags interest
@@ -18,7 +20,7 @@ import (
 // @Produce json
 // @Param offset query int false "offset count"
 // @Router /interest [get]
-// @Success 200 {object} InterestListResponse
+// @Success 200 {object} []InterestListResponse
 func GetList(c *gin.Context) {
 	offset := c.Request.URL.Query().Get("offset")
 	intOffset, err := strconv.Atoi(offset)
@@ -35,7 +37,7 @@ func GetList(c *gin.Context) {
 		res.ServerError(c)
 		panic(err)
 	}
-	go logs.Log(c.ClientIP(), constants.GET, constants.InterestGroup+constants.Default)
+	go logs.Log(c.ClientIP(), vars.GET, vars.InterestGroup+vars.Default)
 	res.Ok(
 		c,
 		"Successfully getting list",
@@ -72,7 +74,7 @@ func SetList(c *gin.Context) {
 	if err != nil {
 		res.BadRequest(c, "Cannot add ticker", 4002)
 	}
-	go logs.Log(c.ClientIP(), constants.POST, constants.InterestGroup+constants.Default)
+	go logs.Log(c.ClientIP(), vars.POST, vars.InterestGroup+vars.Default)
 	res.Ok(c, "Succesfully add ticker", gin.H{"result": true}, 2000)
 }
 
@@ -104,7 +106,7 @@ func DeleteList(c *gin.Context) {
 		res.BadRequest(c, "Cannot delete ticker", 4002)
 		panic(err)
 	}
-	go logs.Log(c.ClientIP(), constants.DELETE, constants.InterestGroup+constants.Default)
+	go logs.Log(c.ClientIP(), vars.DELETE, vars.InterestGroup+vars.Default)
 	res.Ok(c, "Successfully delete ticker", gin.H{"result": true}, 2000)
 }
 
@@ -138,16 +140,22 @@ func SaleInterest(c *gin.Context) {
 		panic(parseErr)
 	}
 	now := time.Now().In(constants.KrTime())
+	fmt.Println(now.Weekday().String())
+	weekDay := now.Weekday()
+	if weekDay.String() == "Sunday" || weekDay.String() == "Saturday" {
+		res.BadRequest(c, "Today is sunady or monday", 4006)
+		panic(nil)
+	}
 	if endTime.Before(now) {
 		res.BadRequest(c, "The time to sale has over", 4005)
 		panic(nil)
 	}
 
-	err := saleInterest(user.UserID, body, now)
-	if !err {
+	flag := saleInterest(user.UserID, body, now)
+	if !flag {
 		res.BadRequest(c, "Cannot sale my interest", 4004)
-		panic(err)
+		panic(flag)
 	}
-	go logs.Log(c.ClientIP(), constants.PUT, constants.InterestGroup+constants.SaleInterestTicker)
+	go logs.Log(c.ClientIP(), vars.PUT, vars.InterestGroup+vars.SaleInterestTicker)
 	res.Ok(c, "Successfully sale my interest", gin.H{"result": true}, 2000)
 }

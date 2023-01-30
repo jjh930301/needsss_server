@@ -1,0 +1,20 @@
+FROM golang:1.19 as build
+WORKDIR /socket
+
+ENV GOPRIVATE=github.com/jjh930301
+
+ARG GITACCOUNT
+ARG GITTOKEN
+
+# install git
+RUN apk add --no-cache git 
+# private repo config
+RUN git config --global url."https://${GITACCOUNT}:${GITTOKEN}@github.com/jjh930301/needsss_common".insteadOf "https://github.com/jjh930301/needsss_common"
+COPY ./go.mod .
+COPY ./go.sum .
+RUN go mod download
+COPY . .
+RUN go build -o /build/socket .
+FROM golang:1.19 as run
+COPY --from=build /build/socket /socket
+ENTRYPOINT [ "/socket" ]

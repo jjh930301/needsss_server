@@ -5,18 +5,22 @@
 * chart_scheduler = http://localhost:3000/docs/
 * gin 문서 = http://localhost:8090/docs/index.html
 
-**config**
+**Env file**
 * touch .env
 * ENV=development
 * MYSQL_ROOT_PASSWORD=password
 * MYSQL_DATABASE=DATABASE
 * JWT_ACCESS_SECRET=access_secret
 * JWT_REFRESH_SECRET=refresh_secret
+* GOOGLE_CLIENT_ID=google_client_id
+* GOOGLE_SECRETT=google_secret
+* GIT_ACCOUNT=github_account
+* GIT_TOKEN=github_token
 
 * cd mysql
 * mkdir data -> 데이터를 실제로 담아둘 dir 생성
 
 **data insert**
-* http://localhost:8090/docs/index.htm -> 유저 생성
+* http://localhost:7070/docs/index.htm -> 유저 생성
 * http://localhost:3000/docs 이동
 * 유저 생성했을 떄 떨어지는 access_token으로 종목 -> 차트 insert

@@ -1,75 +1,5 @@
 definitions:
-  auth.GoogleBody:
-    properties:
-      email:
-        type: string
-      profile_image:
-        type: string
-    type: object
-  auth.RegistBody:
-    properties:
-      email:
-        type: string
-      mobile:
-        type: string
-      nickname:
-        type: string
-      password:
-        type: string
-    type: object
-  auth.TokenBody:
-    properties:
-      refresh_token:
-        type: string
-    type: object
-  auth.TokenResponse:
-    properties:
-      access_token:
-        description: access token
-        type: string
-      refresh_token:
-        description: refresh token
-        type: string
-    type: object
-  auth.UserResponse:
-    properties:
-      access_token:
-        type: string
-      created_at:
-        description: 가입일
-        type: string
-      email:
-        description: email 마우스 호버시에만 보이게
-        type: string
-      nickname:
-        description: nickname
-        type: string
-      profile_image:
-        description: google login시 받아오는 profile image
-        type: string
-      refresh_token:
-        type: string
-    type: object
-  comment.NewCommentBody:
-    properties:
-      code:
-        type: string
-      comment:
-        type: string
-    type: object
-  comment.TickerCommentsResponse:
-    properties:
-      comment:
-        description: 코멘트
-        type: string
-      id:
-        type: string
-      updated_at:
-        type: string
-      user:
-        $ref: '#/definitions/comment.commentUser'
-    type: object
-  comment.commentUser:
+  dto.CommentUser:
     properties:
       nickname:
         description: 닉네임
@@ -78,33 +8,36 @@ definitions:
         description: 프로필이미지
         type: string
     type: object
-  interest.DeleteIntereestBody:
+  dto.DeleteInterestDto:
     properties:
-      code:
-        type: string
       date:
         type: string
-    type: object
-  interest.InterestListResponse:
-    properties:
-      recent:
-        $ref: '#/definitions/interest.interestTickerChartModel'
-      ticker:
-        $ref: '#/definitions/interest.interestList'
-    type: object
-  interest.SaleInterestBody:
-    properties:
-      code:
+      symbol:
         type: string
+    type: object
+  dto.GoogleDto:
+    properties:
+      email:
+        type: string
+      profile_image:
+        type: string
+    type: object
+  dto.HolidayDto:
+    properties:
       date:
+        description: 휴일 날짜
         type: string
-    type: object
-  interest.SetInterestBody:
-    properties:
-      code:
+      name:
+        description: 휴일 이름
         type: string
+      opened_at:
+        description: 시간 [수능일 같은 경우 10시에 개장]
+        type: string
+      type:
+        description: 1인 경우 opened_at 이후에 가능
+        type: integer
     type: object
-  interest.interestList:
+  dto.InterestList:
     properties:
       close:
         description: 등록한 시점의 가격
@@ -125,17 +58,17 @@ definitions:
         description: 종목코드
         type: string
       ticker:
-        $ref: '#/definitions/interest.interestTickerModel'
+        $ref: '#/definitions/dto.InterestTickerModel'
       type:
         description: 현재 사용하지 않습니다.
         type: integer
       user:
-        $ref: '#/definitions/interest.interestUserModel'
+        $ref: '#/definitions/dto.InterestUserModel'
       volume:
         description: 등록된 시점의 거래량
         type: string
     type: object
-  interest.interestTickerChartModel:
+  dto.InterestTickerChartModel:
     properties:
       close:
         description: 현재가
@@ -147,19 +80,66 @@ definitions:
         description: 현재 거래량
         type: string
     type: object
-  interest.interestTickerModel:
+  dto.InterestTickerModel:
     properties:
       homepage:
         description: 홈페이지
         type: string
     type: object
-  interest.interestUserModel:
+  dto.InterestUserModel:
     properties:
       nickname:
         description: 등록한 사용자의 닉네임
         type: string
     type: object
-  ticker.OneTickerChartResponse:
+  dto.NewCommentDto:
+    properties:
+      comment:
+        type: string
+      symbol:
+        type: string
+    type: object
+  dto.NicknameDto:
+    properties:
+      nickname:
+        type: string
+    type: object
+  dto.RegistDto:
+    properties:
+      email:
+        type: string
+      mobile:
+        type: string
+      nickname:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.SaleInterestDto:
+    properties:
+      date:
+        type: string
+      symbol:
+        type: string
+    type: object
+  dto.SetInterestDto:
+    properties:
+      symbol:
+        type: string
+    type: object
+  dto.TokenDto:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  responses.InterestListResponse:
+    properties:
+      recent:
+        $ref: '#/definitions/dto.InterestTickerChartModel'
+      ticker:
+        $ref: '#/definitions/dto.InterestList'
+    type: object
+  responses.OneTickerChartResponse:
     properties:
       close:
         description: 종가(현재가)
@@ -183,13 +163,13 @@ definitions:
         description: 거래량
         type: string
     type: object
-  ticker.OneTickerResponse:
+  responses.OneTickerResponse:
     properties:
       bps:
         type: number
       chart:
         items:
-          $ref: '#/definitions/ticker.OneTickerChartResponse'
+          $ref: '#/definitions/responses.OneTickerChartResponse'
         type: array
       div:
         type: number
@@ -233,7 +213,7 @@ definitions:
         description: index
         type: string
     type: object
-  ticker.SearchTickerResponse:
+  responses.SearchTickerResponse:
     properties:
       homepage:
         description: 홈페이지 (로고 url)
@@ -248,9 +228,51 @@ definitions:
         description: 코드
         type: string
     type: object
-  user.NicknameBody:
+  responses.TickerCommentsResponse:
     properties:
+      comment:
+        description: 코멘트
+        type: string
+      comment_id:
+        description: 코멘트 uuid 수정이나 삭제시 필요할 수도 있습니다.
+        type: string
+      created_at:
+        description: 코멘트 등록일시
+        type: string
+      symbol:
+        description: 메세지를 뿌려줄 symbol
+        type: string
+      user:
+        $ref: '#/definitions/dto.CommentUser'
+    type: object
+  responses.TokenResponse:
+    properties:
+      access_token:
+        description: access token
+        type: string
+      refresh_token:
+        description: refresh token
+        type: string
+    type: object
+  responses.UserResponse:
+    properties:
+      access_token:
+        type: string
+      created_at:
+        description: 가입일
+        type: string
+      email:
+        description: email 마우스 호버시에만 보이게
+        type: string
+      id:
+        type: string
       nickname:
+        description: nickname
+        type: string
+      profile_image:
+        description: google login시 받아오는 profile image
+        type: string
+      refresh_token:
         type: string
     type: object
 info:
@@ -271,14 +293,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/auth.GoogleBody'
+          $ref: '#/definitions/dto.GoogleDto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.UserResponse'
+            $ref: '#/definitions/responses.UserResponse'
       summary: 구글 로그인
       tags:
       - auth
@@ -302,7 +324,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.UserResponse'
+            $ref: '#/definitions/responses.UserResponse'
       summary: 구글 idtoken
       tags:
       - auth
@@ -327,7 +349,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.UserResponse'
+            $ref: '#/definitions/responses.UserResponse'
       summary: 로그인 -> 테스트 로그인
       tags:
       - auth
@@ -347,14 +369,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/auth.RegistBody'
+          $ref: '#/definitions/dto.RegistDto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.UserResponse'
+            $ref: '#/definitions/responses.UserResponse'
       summary: 회원가입
       tags:
       - auth
@@ -373,14 +395,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/auth.TokenBody'
+          $ref: '#/definitions/dto.TokenDto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.TokenResponse'
+            $ref: '#/definitions/responses.TokenResponse'
       summary: 토큰
       tags:
       - auth
@@ -394,6 +416,29 @@ paths:
       summary: health check
       tags:
       - health
+  /holiday:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        2000 성공
+        4003 missing bodies
+        4004 이미 생성된 공휴일
+      parameters:
+      - description: holiday
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.HolidayDto'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: 공휴일 or 매매 늦게 시작하는 날 설정
+      tags:
+      - holiday
   /interest:
     delete:
       consumes:
@@ -409,7 +454,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/interest.DeleteIntereestBody'
+          $ref: '#/definitions/dto.DeleteInterestDto'
       produces:
       - application/json
       responses: {}
@@ -434,7 +479,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/interest.InterestListResponse'
+              $ref: '#/definitions/responses.InterestListResponse'
             type: array
       summary: 관심종목
       tags:
@@ -453,14 +498,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/interest.SetInterestBody'
+          $ref: '#/definitions/dto.SetInterestDto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/interest.InterestListResponse'
+            $ref: '#/definitions/responses.InterestListResponse'
       security:
       - BearerAuth: []
       summary: 관심종목 추가
@@ -482,7 +527,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/interest.SaleInterestBody'
+          $ref: '#/definitions/dto.SaleInterestDto'
       produces:
       - application/json
       responses: {}
@@ -491,7 +536,7 @@ paths:
       summary: 관심종목 매도
       tags:
       - interest
-  /ticker/{ticker}:
+  /ticker/{symbol}:
     get:
       consumes:
       - application/json
@@ -500,9 +545,9 @@ paths:
         4001 required count
         4002 cannot found list
       parameters:
-      - description: code
+      - description: symbol
         in: path
-        name: ticker
+        name: symbol
         required: true
         type: string
       - description: count
@@ -515,11 +560,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ticker.OneTickerResponse'
+            $ref: '#/definitions/responses.OneTickerResponse'
       summary: 종목 가져오기
       tags:
       - ticker
-  /ticker/chart/{ticker}:
+  /ticker/chart/{symbol}:
     get:
       consumes:
       - application/json
@@ -529,9 +574,9 @@ paths:
         4001 missing count
         4002 date format error yyyy-mm-dd
       parameters:
-      - description: code
+      - description: symbol
         in: path
-        name: ticker
+        name: symbol
         required: true
         type: string
       - description: 마지막 날짜
@@ -549,7 +594,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/ticker.OneTickerChartResponse'
+              $ref: '#/definitions/responses.OneTickerChartResponse'
             type: array
       summary: 종목 차트 가져오기
       tags:
@@ -561,7 +606,7 @@ paths:
       description: |-
         2000 성공
         4101 required login
-        4003 empty comment or code
+        4003 empty comment or symbol
         4004 missing bodies
       parameters:
       - description: ticker comment
@@ -569,7 +614,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/comment.NewCommentBody'
+          $ref: '#/definitions/dto.NewCommentDto'
       produces:
       - application/json
       responses:
@@ -577,14 +622,14 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/comment.TickerCommentsResponse'
+              $ref: '#/definitions/responses.TickerCommentsResponse'
             type: array
       security:
       - BearerAuth: []
       summary: 티커 코멘트 등록
       tags:
       - comment
-  /ticker/comment/{ticker}:
+  /ticker/comment/{symbol}:
     get:
       consumes:
       - application/json
@@ -593,9 +638,9 @@ paths:
         4101 required login
         4004 count , created_at error
       parameters:
-      - description: code
+      - description: symbol
         in: path
-        name: ticker
+        name: symbol
         required: true
         type: string
       - description: count
@@ -606,7 +651,6 @@ paths:
       - description: created_at
         in: query
         name: created_at
-        required: true
         type: string
       produces:
       - application/json
@@ -615,7 +659,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/comment.TickerCommentsResponse'
+              $ref: '#/definitions/responses.TickerCommentsResponse'
             type: array
       summary: 티커 코멘트 목록
       tags:
@@ -648,7 +692,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/ticker.SearchTickerResponse'
+              $ref: '#/definitions/responses.SearchTickerResponse'
             type: array
       summary: 종목 검색
       tags:
@@ -668,14 +712,14 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/user.NicknameBody'
+          $ref: '#/definitions/dto.NicknameDto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/auth.UserResponse'
+            $ref: '#/definitions/responses.UserResponse'
       security:
       - BearerAuth: []
       summary: 닉네임 변경

@@ -1,11 +1,11 @@
-module github.com/jjh930301/market
+module github.com/jjh930301/needsss/gin
 
 go 1.19
 
 require (
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.8.2
-	github.com/jjh930301/needsss_common v0.0.0-20230127064507-f8be946dab9a
+	github.com/jjh930301/needsss_common v0.0.0-20230210072336-5275cec77b18
 	github.com/satori/go.uuid v1.2.0
 	github.com/shopspring/decimal v1.3.1
 	github.com/swaggo/files v1.0.0

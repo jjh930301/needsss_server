@@ -5,7 +5,24 @@ go 1.19
 require (
 	github.com/gin-gonic/gin v1.8.2
 	github.com/googollee/go-socket.io v1.6.2
-	github.com/jjh930301/needsss_common v0.0.0-20230128021241-4b4100156422
+	github.com/jjh930301/needsss_common v0.0.0-20230204064937-0151183dcc62
+)
+
+require (
+	github.com/KyleBanks/depth v1.2.1 // indirect
+	github.com/PuerkitoBio/purell v1.1.1 // indirect
+	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
+	github.com/go-openapi/jsonpointer v0.19.5 // indirect
+	github.com/go-openapi/jsonreference v0.19.6 // indirect
+	github.com/go-openapi/spec v0.20.4 // indirect
+	github.com/josharian/intern v1.0.0 // indirect
+	github.com/mailru/easyjson v0.7.6 // indirect
+	golang.org/x/tools v0.1.12 // indirect
+)
+
+require (
+	github.com/satori/go.uuid v1.2.0
+	github.com/shopspring/decimal v1.3.1 // indirect
 )
 
 require (
@@ -40,5 +57,5 @@ require (
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gorm.io/driver/mysql v1.4.5 // indirect
-	gorm.io/gorm v1.24.3 // indirect
+	gorm.io/gorm v1.24.3
 )

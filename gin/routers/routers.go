@@ -1,50 +1,59 @@
 package routers
 
 import (
+	"os"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	authRouter "github.com/jjh930301/market/routers/auth"
-	interestRouter "github.com/jjh930301/market/routers/interest"
-	tickerRouter "github.com/jjh930301/market/routers/ticker"
-	commentRouter "github.com/jjh930301/market/routers/ticker/comment"
-	userRouter "github.com/jjh930301/market/routers/user"
-	"github.com/jjh930301/market/vars"
+	"github.com/jjh930301/needsss/gin/endpoint"
+	"github.com/jjh930301/needsss/gin/repositories"
 	"github.com/jjh930301/needsss_common/middleware"
 )
 
+var userRepo repositories.UserRepository
+
 func InitRouter() *gin.Engine {
-	r := gin.Default()
+	r := gin.New()
+	if os.Getenv("ENV") == "dev" {
+		r.Use(gin.LoggerWithConfig(gin.LoggerConfig{
+			SkipPaths: []string{"/health/check"},
+		}))
+	}
+
 	r.Use(cors.New(middleware.CORSConfig()))
 
 	r.GET("/health/check", HealthCheck)
-	auth := r.Group(vars.AuthGroup)
+	auth := r.Group(endpoint.AuthGroup)
 	{
-		auth.POST(vars.Token, authRouter.Token)
-		auth.GET(vars.GoogleIDToken, authRouter.GoogleIDToken)
+		auth.POST(endpoint.Token, Token)
+		auth.GET(endpoint.GoogleIDToken, GoogleIDToken)
 	}
 
-	ticker := r.Group(vars.TickerGroup)
+	ticker := r.Group(endpoint.TickerGroup)
 	{
-		ticker.GET(vars.GetTicker, tickerRouter.FindOne)
-		ticker.GET(vars.GetChart, tickerRouter.GetTickerChart)
-		ticker.GET(vars.TickerSearch, tickerRouter.SearchTicker)
-		comment := ticker.Group(vars.CommentGroup)
+		ticker.GET(endpoint.GetTicker, FindOne)
+		ticker.GET(endpoint.GetChart, GetTickerChart)
+		ticker.GET(endpoint.TickerSearch, SearchTicker)
+		comment := ticker.Group(endpoint.CommentGroup)
 		{
-			comment.POST(vars.Default, middleware.Authenticator, commentRouter.NewComment)
-			comment.GET(vars.GetTickerComments, commentRouter.GetTickerComments)
+			comment.GET(endpoint.GetTickerComments, GetTickerComments)
 		}
 	}
 
-	interest := r.Group(vars.InterestGroup)
+	interest := r.Group(endpoint.InterestGroup)
 	{
-		interest.GET(vars.Default, interestRouter.GetList)
-		interest.POST(vars.Default, middleware.Authenticator, interestRouter.SetList)
-		interest.DELETE(vars.Default, middleware.Authenticator, interestRouter.DeleteList)
-		interest.PUT(vars.SaleInterestTicker, middleware.Authenticator, interestRouter.SaleInterest)
+		interest.GET(endpoint.Default, GetList)
+		interest.POST(endpoint.Default, middleware.Authenticator, SetList)
+		interest.DELETE(endpoint.Default, middleware.Authenticator, DeleteList)
+		interest.PUT(endpoint.SaleInterestTicker, middleware.Authenticator, SaleInterest)
 	}
-	user := r.Group(vars.UserGroup)
+	user := r.Group(endpoint.UserGroup)
 	{
-		user.PUT(vars.SetNickname, middleware.Authenticator, userRouter.SetNickname)
+		user.PUT(endpoint.SetNickname, middleware.Authenticator, SetNickname)
+	}
+	holidays := r.Group(endpoint.HolidayGroup)
+	{
+		holidays.POST(endpoint.Default, middleware.Authenticator, InsertHoliday)
 	}
 	return r
 }

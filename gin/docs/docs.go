@@ -37,7 +37,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/auth.GoogleBody"
+                            "$ref": "#/definitions/dto.GoogleDto"
                         }
                     }
                 ],
@@ -45,7 +45,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.UserResponse"
+                            "$ref": "#/definitions/responses.UserResponse"
                         }
                     }
                 }
@@ -76,7 +76,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.UserResponse"
+                            "$ref": "#/definitions/responses.UserResponse"
                         }
                     }
                 }
@@ -114,7 +114,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.UserResponse"
+                            "$ref": "#/definitions/responses.UserResponse"
                         }
                     }
                 }
@@ -141,7 +141,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/auth.RegistBody"
+                            "$ref": "#/definitions/dto.RegistDto"
                         }
                     }
                 ],
@@ -149,7 +149,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.UserResponse"
+                            "$ref": "#/definitions/responses.UserResponse"
                         }
                     }
                 }
@@ -175,7 +175,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/auth.TokenBody"
+                            "$ref": "#/definitions/dto.TokenDto"
                         }
                     }
                 ],
@@ -183,7 +183,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.TokenResponse"
+                            "$ref": "#/definitions/responses.TokenResponse"
                         }
                     }
                 }
@@ -201,6 +201,38 @@ const docTemplate = `{
                     "health"
                 ],
                 "summary": "health check",
+                "responses": {}
+            }
+        },
+        "/holiday": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "2000 성공\n4003 missing bodies\n4004 이미 생성된 공휴일",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "holiday"
+                ],
+                "summary": "공휴일 or 매매 늦게 시작하는 날 설정",
+                "parameters": [
+                    {
+                        "description": "holiday",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.HolidayDto"
+                        }
+                    }
+                ],
                 "responses": {}
             }
         },
@@ -231,7 +263,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/interest.InterestListResponse"
+                                "$ref": "#/definitions/responses.InterestListResponse"
                             }
                         }
                     }
@@ -261,7 +293,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/interest.SetInterestBody"
+                            "$ref": "#/definitions/dto.SetInterestDto"
                         }
                     }
                 ],
@@ -269,7 +301,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/interest.InterestListResponse"
+                            "$ref": "#/definitions/responses.InterestListResponse"
                         }
                     }
                 }
@@ -298,7 +330,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/interest.DeleteIntereestBody"
+                            "$ref": "#/definitions/dto.DeleteInterestDto"
                         }
                     }
                 ],
@@ -330,14 +362,14 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/interest.SaleInterestBody"
+                            "$ref": "#/definitions/dto.SaleInterestDto"
                         }
                     }
                 ],
                 "responses": {}
             }
         },
-        "/ticker/chart/{ticker}": {
+        "/ticker/chart/{symbol}": {
             "get": {
                 "description": "2000 성공\n2001 empty response\n4001 missing count\n4002 date format error yyyy-mm-dd",
                 "consumes": [
@@ -353,8 +385,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "code",
-                        "name": "ticker",
+                        "description": "symbol",
+                        "name": "symbol",
                         "in": "path",
                         "required": true
                     },
@@ -377,7 +409,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/ticker.OneTickerChartResponse"
+                                "$ref": "#/definitions/responses.OneTickerChartResponse"
                             }
                         }
                     }
@@ -391,7 +423,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "2000 성공\n4101 required login\n4003 empty comment or code\n4004 missing bodies",
+                "description": "2000 성공\n4101 required login\n4003 empty comment or symbol\n4004 missing bodies",
                 "consumes": [
                     "application/json"
                 ],
@@ -409,7 +441,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/comment.NewCommentBody"
+                            "$ref": "#/definitions/dto.NewCommentDto"
                         }
                     }
                 ],
@@ -419,14 +451,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/comment.TickerCommentsResponse"
+                                "$ref": "#/definitions/responses.TickerCommentsResponse"
                             }
                         }
                     }
                 }
             }
         },
-        "/ticker/comment/{ticker}": {
+        "/ticker/comment/{symbol}": {
             "get": {
                 "description": "2000 성공\n4101 required login\n4004 count , created_at error",
                 "consumes": [
@@ -442,8 +474,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "code",
-                        "name": "ticker",
+                        "description": "symbol",
+                        "name": "symbol",
                         "in": "path",
                         "required": true
                     },
@@ -458,8 +490,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "created_at",
                         "name": "created_at",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -468,7 +499,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/comment.TickerCommentsResponse"
+                                "$ref": "#/definitions/responses.TickerCommentsResponse"
                             }
                         }
                     }
@@ -515,14 +546,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/ticker.SearchTickerResponse"
+                                "$ref": "#/definitions/responses.SearchTickerResponse"
                             }
                         }
                     }
                 }
             }
         },
-        "/ticker/{ticker}": {
+        "/ticker/{symbol}": {
             "get": {
                 "description": "2000 성공\n4001 required count\n4002 cannot found list",
                 "consumes": [
@@ -538,8 +569,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "code",
-                        "name": "ticker",
+                        "description": "symbol",
+                        "name": "symbol",
                         "in": "path",
                         "required": true
                     },
@@ -554,7 +585,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ticker.OneTickerResponse"
+                            "$ref": "#/definitions/responses.OneTickerResponse"
                         }
                     }
                 }
@@ -585,7 +616,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.NicknameBody"
+                            "$ref": "#/definitions/dto.NicknameDto"
                         }
                     }
                 ],
@@ -593,7 +624,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/auth.UserResponse"
+                            "$ref": "#/definitions/responses.UserResponse"
                         }
                     }
                 }
@@ -601,112 +632,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "auth.GoogleBody": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "profile_image": {
-                    "type": "string"
-                }
-            }
-        },
-        "auth.RegistBody": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "mobile": {
-                    "type": "string"
-                },
-                "nickname": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "auth.TokenBody": {
-            "type": "object",
-            "properties": {
-                "refresh_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "auth.TokenResponse": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "description": "access token",
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "description": "refresh token",
-                    "type": "string"
-                }
-            }
-        },
-        "auth.UserResponse": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "description": "가입일",
-                    "type": "string"
-                },
-                "email": {
-                    "description": "email 마우스 호버시에만 보이게",
-                    "type": "string"
-                },
-                "nickname": {
-                    "description": "nickname",
-                    "type": "string"
-                },
-                "profile_image": {
-                    "description": "google login시 받아오는 profile image",
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "comment.NewCommentBody": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "comment": {
-                    "type": "string"
-                }
-            }
-        },
-        "comment.TickerCommentsResponse": {
-            "type": "object",
-            "properties": {
-                "comment": {
-                    "description": "코멘트",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/comment.commentUser"
-                }
-            }
-        },
-        "comment.commentUser": {
+        "dto.CommentUser": {
             "type": "object",
             "properties": {
                 "nickname": {
@@ -719,48 +645,50 @@ const docTemplate = `{
                 }
             }
         },
-        "interest.DeleteIntereestBody": {
+        "dto.DeleteInterestDto": {
             "type": "object",
             "properties": {
-                "code": {
-                    "type": "string"
-                },
                 "date": {
                     "type": "string"
-                }
-            }
-        },
-        "interest.InterestListResponse": {
-            "type": "object",
-            "properties": {
-                "recent": {
-                    "$ref": "#/definitions/interest.interestTickerChartModel"
                 },
-                "ticker": {
-                    "$ref": "#/definitions/interest.interestList"
+                "symbol": {
+                    "type": "string"
                 }
             }
         },
-        "interest.SaleInterestBody": {
+        "dto.GoogleDto": {
             "type": "object",
             "properties": {
-                "code": {
+                "email": {
                     "type": "string"
                 },
+                "profile_image": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.HolidayDto": {
+            "type": "object",
+            "properties": {
                 "date": {
+                    "description": "휴일 날짜",
                     "type": "string"
+                },
+                "name": {
+                    "description": "휴일 이름",
+                    "type": "string"
+                },
+                "opened_at": {
+                    "description": "시간 [수능일 같은 경우 10시에 개장]",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "1인 경우 opened_at 이후에 가능",
+                    "type": "integer"
                 }
             }
         },
-        "interest.SetInterestBody": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                }
-            }
-        },
-        "interest.interestList": {
+        "dto.InterestList": {
             "type": "object",
             "properties": {
                 "close": {
@@ -788,14 +716,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "ticker": {
-                    "$ref": "#/definitions/interest.interestTickerModel"
+                    "$ref": "#/definitions/dto.InterestTickerModel"
                 },
                 "type": {
                     "description": "현재 사용하지 않습니다.",
                     "type": "integer"
                 },
                 "user": {
-                    "$ref": "#/definitions/interest.interestUserModel"
+                    "$ref": "#/definitions/dto.InterestUserModel"
                 },
                 "volume": {
                     "description": "등록된 시점의 거래량",
@@ -803,7 +731,7 @@ const docTemplate = `{
                 }
             }
         },
-        "interest.interestTickerChartModel": {
+        "dto.InterestTickerChartModel": {
             "type": "object",
             "properties": {
                 "close": {
@@ -820,7 +748,7 @@ const docTemplate = `{
                 }
             }
         },
-        "interest.interestTickerModel": {
+        "dto.InterestTickerModel": {
             "type": "object",
             "properties": {
                 "homepage": {
@@ -829,7 +757,7 @@ const docTemplate = `{
                 }
             }
         },
-        "interest.interestUserModel": {
+        "dto.InterestUserModel": {
             "type": "object",
             "properties": {
                 "nickname": {
@@ -838,7 +766,81 @@ const docTemplate = `{
                 }
             }
         },
-        "ticker.OneTickerChartResponse": {
+        "dto.NewCommentDto": {
+            "type": "object",
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "symbol": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.NicknameDto": {
+            "type": "object",
+            "properties": {
+                "nickname": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.RegistDto": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "mobile": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.SaleInterestDto": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "symbol": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.SetInterestDto": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.TokenDto": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "responses.InterestListResponse": {
+            "type": "object",
+            "properties": {
+                "recent": {
+                    "$ref": "#/definitions/dto.InterestTickerChartModel"
+                },
+                "ticker": {
+                    "$ref": "#/definitions/dto.InterestList"
+                }
+            }
+        },
+        "responses.OneTickerChartResponse": {
             "type": "object",
             "properties": {
                 "close": {
@@ -871,7 +873,7 @@ const docTemplate = `{
                 }
             }
         },
-        "ticker.OneTickerResponse": {
+        "responses.OneTickerResponse": {
             "type": "object",
             "properties": {
                 "bps": {
@@ -880,7 +882,7 @@ const docTemplate = `{
                 "chart": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ticker.OneTickerChartResponse"
+                        "$ref": "#/definitions/responses.OneTickerChartResponse"
                     }
                 },
                 "div": {
@@ -941,7 +943,7 @@ const docTemplate = `{
                 }
             }
         },
-        "ticker.SearchTickerResponse": {
+        "responses.SearchTickerResponse": {
             "type": "object",
             "properties": {
                 "homepage": {
@@ -962,10 +964,69 @@ const docTemplate = `{
                 }
             }
         },
-        "user.NicknameBody": {
+        "responses.TickerCommentsResponse": {
             "type": "object",
             "properties": {
+                "comment": {
+                    "description": "코멘트",
+                    "type": "string"
+                },
+                "comment_id": {
+                    "description": "코멘트 uuid 수정이나 삭제시 필요할 수도 있습니다.",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "코멘트 등록일시",
+                    "type": "string"
+                },
+                "symbol": {
+                    "description": "메세지를 뿌려줄 symbol",
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.CommentUser"
+                }
+            }
+        },
+        "responses.TokenResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "description": "access token",
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "description": "refresh token",
+                    "type": "string"
+                }
+            }
+        },
+        "responses.UserResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "가입일",
+                    "type": "string"
+                },
+                "email": {
+                    "description": "email 마우스 호버시에만 보이게",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
                 "nickname": {
+                    "description": "nickname",
+                    "type": "string"
+                },
+                "profile_image": {
+                    "description": "google login시 받아오는 profile image",
+                    "type": "string"
+                },
+                "refresh_token": {
                     "type": "string"
                 }
             }

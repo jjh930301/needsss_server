@@ -19,7 +19,18 @@ import (
 // @name Authorization
 func main() {
 	utils.OauthInit()
-	database.InitDb()
+	var user string
+	if os.Getenv("MYSQL_USER") == "" {
+		user = "root"
+	} else {
+		user = os.Getenv("MYSQL_USER")
+	}
+	database.InitDb(
+		user,
+		os.Getenv("MYSQL_ROOT_PASSWORD"),
+		os.Getenv("MYSQL_HOST"),
+		os.Getenv("MYSQL_DATABASE"),
+	)
 	if os.Getenv("ENV") != "production" {
 		database.DB.AutoMigrate(
 			&models.HolidayModel{},

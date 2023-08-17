@@ -23,7 +23,7 @@ func GetList(offset int) *[]responses.InterestListResponse {
 		return user.Model(&models.UserModel{}).Find(&userModel)
 	}).Preload("Ticker", func(ticker *gorm.DB) *gorm.DB {
 		return ticker.Model(&models.KrTickerModel{}).Find(&tickerModel)
-	}).Order("date_time desc").Limit(20).Offset(offset).Find(&interestes)
+	}).Order("date_time desc").Limit(40).Offset(offset).Find(&interestes)
 
 	for _, i := range interestes {
 		var chartModel dto.InterestTickerChartModel

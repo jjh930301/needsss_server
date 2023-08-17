@@ -21,7 +21,6 @@ func JoinTickerRoom(s socketio.Conn, msg string) {
 		"fcm_token": ticker.FcmToken,
 	}
 	s.SetContext(ctx)
-	return
 }
 
 func LeaveTickerRoom(s socketio.Conn, msg string) {
@@ -33,5 +32,4 @@ func LeaveTickerRoom(s socketio.Conn, msg string) {
 	}
 	s.Leave(ticker.Symbol)
 	s.SetContext(nil)
-	return
 }

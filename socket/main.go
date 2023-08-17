@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	socketio "github.com/googollee/go-socket.io"
@@ -13,11 +15,21 @@ import (
 
 func main() {
 	utils.OauthInit()
-	database.InitDb()
+	var user string
+	if os.Getenv("MYSQL_USER") == "" {
+		user = "root"
+	} else {
+		user = os.Getenv("MYSQL_USER")
+	}
+	database.InitDb(
+		user,
+		os.Getenv("MYSQL_ROOT_PASSWORD"),
+		os.Getenv("MYSQL_HOST"),
+		os.Getenv("MYSQL_DATABASE"),
+	)
 	r := gin.Default()
 
 	r.Use(cors.New(middleware.CORSConfig()))
-
 	server := server.Server()
 	server.OnConnect("/", func(s socketio.Conn) error {
 		s.Join("main")
@@ -26,6 +38,7 @@ func main() {
 	server.OnEvent("/", "ticker", handlers.JoinTickerRoom)
 	server.OnEvent("/", "leave", handlers.LeaveTickerRoom)
 	server.OnEvent("/", "comment", handlers.HandleComment)
+	server.OnEvent("/", "interest", handlers.HandleRealTime)
 
 	server.OnDisconnect("/", func(s socketio.Conn, msg string) {
 		s.LeaveAll()

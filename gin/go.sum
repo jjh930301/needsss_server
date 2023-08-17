@@ -113,6 +113,8 @@ github.com/jjh930301/needsss_common v0.0.0-20230207064727-0af2307757b1 h1:Xcnkf8
 github.com/jjh930301/needsss_common v0.0.0-20230207064727-0af2307757b1/go.mod h1:65lm0k/sLzhP3d/133JhPNBXOyqHaz3rRWqpMewsfRU=
 github.com/jjh930301/needsss_common v0.0.0-20230210072336-5275cec77b18 h1:hYYaggwAC2eUE2fyE93UWNOeVedIbettRGFID7LAwhE=
 github.com/jjh930301/needsss_common v0.0.0-20230210072336-5275cec77b18/go.mod h1:65lm0k/sLzhP3d/133JhPNBXOyqHaz3rRWqpMewsfRU=
+github.com/jjh930301/needsss_common v0.0.0-20230817114629-ea574ac71eb3 h1:N6DQvxROtsAcLDTaSheM09NvQe3Nu7fYfYYCWQVxj9c=
+github.com/jjh930301/needsss_common v0.0.0-20230817114629-ea574ac71eb3/go.mod h1:65lm0k/sLzhP3d/133JhPNBXOyqHaz3rRWqpMewsfRU=
 github.com/josharian/intern v1.0.0 h1:vlS4z54oSdjm0bgjRigI+G1HpF+tI+9rE5LLzOg8HmY=
 github.com/josharian/intern v1.0.0/go.mod h1:5DoeVV0s6jJacbCEi61lwdGj/aVlrQvzHFFd8Hwg//Y=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=

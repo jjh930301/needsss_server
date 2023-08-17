@@ -5,7 +5,7 @@ go 1.19
 require (
 	github.com/gin-gonic/gin v1.8.2
 	github.com/googollee/go-socket.io v1.6.2
-	github.com/jjh930301/needsss_common v0.0.0-20230204064937-0151183dcc62
+	github.com/jjh930301/needsss_common v0.0.0-20230817114629-ea574ac71eb3
 )
 
 require (

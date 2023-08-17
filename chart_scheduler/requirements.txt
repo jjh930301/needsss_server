@@ -10,5 +10,8 @@ databases
 aiomysql
 pykrx
 matplotlib
-rocketry
+pydantic==1.10.10
+rocketry==2.5.1
 asyncio
+html5lib # for krxStockListing
+python-socketio==4.6.1
